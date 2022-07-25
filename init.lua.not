@@ -1,0 +1,28 @@
+local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
+
+vim.api.nvim_create_autocmd('BufWritePost', {
+  callback = function()
+    local buf_num = vim.api.nvim_get_current_buf()
+    local buf_file = vim.api.nvim_buf_get_name(buf_num)
+    print("buffer num: ", buf_num)
+    print("buffer file: ", buf_file)
+
+    local stopLspClient = function(client, client_id, bufnr)
+      print(string.format("stopped LSP client id %d in buffer %d", client_id, bufnr))
+      client.stop()
+    end
+
+    local showLspClient = function(client, client_id, bufnr)
+      print(string.format("LSP client id %d in buffer %d", client_id, bufnr))
+    end
+
+    vim.lsp.for_each_buffer_client(buf_num, stopLspClient)
+    dofile(buf_file)
+--    packer.compile()
+    vim.lsp.for_each_buffer_client(buf_num, showLspClient)
+  end,
+  group = packer_group,
+  pattern = vim.fn.expand '%:p',
+})
+
+
