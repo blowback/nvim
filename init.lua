@@ -1,12 +1,15 @@
---  ant's .vimrc multi-platform 3.0 23/10/2008
---                              3.1 14/01/2009
---                              3.2 21/10/2010
---                              3.3 22/02/2011
---                              3.4 24/02/2011
---                              3.5 13/04/2012
---                              3.6 10/06/2015
---                              3.7 10/03/2021
---  ant's neovim init.lua       3.8 24/06/2022 based on https://github.com/nvim-lua/kickstart.nvim
+--  ant's .vimrc multi-platform 3.0   23/10/2008
+--                              3.1   14/01/2009
+--                              3.2   21/10/2010
+--                              3.3   22/02/2011
+--                              3.4   24/02/2011
+--                              3.5   13/04/2012
+--                              3.6   10/06/2015
+--                              3.7   10/03/2021
+--  ant's neovim init.lua       3.8   24/06/2022 based on https://github.com/nvim-lua/kickstart.nvim
+--                              3.9   23/02/2023 unicode signs, cmp icons
+--                              3.10  24/02/2023 modularize: based on https://github.com/Allaman/nvim
+--                                                                and https://gist.github.com/benfrain/97f2b91087121b2d4ba0dcc4202d252f
 
 -- install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
@@ -24,7 +27,9 @@ packer.startup(function(use)
     use 'wbthomason/packer.nvim' -- package manager
     use 'tpope/vim-fugitive' -- git commands in nvim
     use 'tpope/vim-rhubarb' -- fugitive-companion to interact with github
+    use 'tpope/vim-abolish' -- case preserving string substitution, camelCase coercion etc
     use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- add git related info in the signs columns and popups
+    use 'onsails/lspkind.nvim' -- icons in LSP completions like VSCode
     use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
     use 'nvim-treesitter/nvim-treesitter' -- highlight, edit, and navigate code
     use 'nvim-treesitter/nvim-treesitter-textobjects' -- additional textobjects for treesitter
@@ -38,10 +43,13 @@ packer.startup(function(use)
     } }
     use { 'L3MON4D3/LuaSnip', requires = { 'saadparwaiz1/cmp_luasnip' } } -- snippet engine and snippet expansion
     use 'mjlbach/onedark.nvim' -- theme inspired by atom
-    use 'shaunsingh/nord.nvim' -- nord theme, with treesitter support
+    use { 'shaunsingh/nord.nvim', commit = "78f5f001709b5b321a35dcdc44549ef93185e024" } -- nord theme, with treesitter support
     use 'nvim-lualine/lualine.nvim' -- fancier statusline
     use 'lukas-reineke/indent-blankline.nvim' -- add indentation guides even on blank lines
-    use 'tpope/vim-sleuth' -- detect tabstop and shiftwidth automatically -- ON PROBATION, ANNOYING?
+    --use 'tpope/vim-sleuth' -- detect tabstop and shiftwidth automatically -- ON PROBATION, ANNOYING?
+    use 'chentoast/marks.nvim' -- show marks in sign column
+    use 'kylechui/nvim-surround' -- surround text with balanced things
+    use 'junegunn/vim-easy-align'
     use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- fuzzy finder (files, lsp, etc)
 
     -- fuzzy finder algorithm which requires local dependencies to be built. only load if `make` is available
@@ -76,7 +84,7 @@ vim.api.nvim_create_autocmd('BufWritePost', {
         local buf_num = vim.api.nvim_get_current_buf()
         local buf_file = vim.api.nvim_buf_get_name(buf_num)
 
-        local stopLSPClient = function(client, client_id, bufnr)
+        local stopLSPClient = function(client, client_id, bufnrb)
             -- print(string.format("stopped lsp client id %d in buffer %d", client_id, bufnr))
             client.stop()
         end
@@ -120,6 +128,8 @@ vim.o.mouse = 'a' -- enable mouse in all modes
 vim.o.breakindent = true -- indent wrapped lines
 vim.o.undofile = true -- save undo history
 vim.wo.signcolumn = 'yes'
+
+
 
 -- [[ search settings ]]
 vim.o.hlsearch = true -- highlight current search pattern
@@ -173,6 +183,33 @@ vim.o.shortmess = "aoOtTAWI" -- restrict annoying "enter to continue" msgs as fa
 vim.o.listchars = "tab:>-,trail:-" -- set display chars in "list-mode"
 vim.o.cursorline = true -- hightlight the line the cursor is on, cf 'cursorcolumn'
 
+-- [[ signs settings ]]
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
+
+local lmarks="ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ"
+local umarks = "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ"
+local nmarks = "⓪①②③④⑤⑥⑦⑧⑨"
+local testmarks = "ⓐbcdefghijklmnopqrstuvwxyz"
+
+function add_marks(marks, initial)
+    local b = string.byte(initial)
+    local i = 1
+    for p, c in utf8.codes(marks)
+    do
+        local c = utf8.char(c)
+        local n = string.char(b + i)
+        i = i + 1
+        vim.fn.sign_define("Marks_" .. n, { text = c, texthl = "MarkSignHL", numhl="MarkSignNumHL" })
+    end
+end
+add_marks(testmarks, "a")
+
+
 -- [[ list mode settings ]]
 vim.o.list = true
 vim.o.listchars = "tab:┊┈,trail:…,extends:►,precedes:◄,nbsp:˽"
@@ -198,15 +235,21 @@ vim.o.termguicolors = true -- 24bit color in tui. uses "gui" highlights over "ct
 vim.cmd [[colorscheme nord]]
 
 if vim.g.colors_name == "nord" then
-    vim.g.nord_contrast = true
-    vim.g.nord_borders = true
+    vim.g.nord_contrast = true -- sidebars and popups get a different background
+    vim.g.nord_borders = true -- enable the border between vsplits
+    -- vim.g.nord_disable_background -- use terminal's background
+    -- vim.g.nord_cursorline_transparent == set the cursorline transparent/visible
+    -- vim.g.enable_sidebar_background -- reenable sidebar backgrounds if global backgrounds disabled
+    vim.g.nord_italic = true -- enable italics
+    -- vim.g.nord_uniform_diff_background - colourful backgrounds in diff mode
+    vim.g.nord_bold = true
     require('nord').set()
 end
 
 -- [[ printing settings ]]
 -- print small, landscape, duplex
-vim.o.printfont = "Courier:h8"
-vim.o.printoptions = "paper:A4,syntax:y,wrap:y,duplex:long,portrait:n"
+-- vim.o.printfont = "Courier:h8"
+-- vim.o.printoptions = "paper:A4,syntax:y,wrap:y,duplex:long,portrait:n"
 
 -- set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -455,7 +498,7 @@ local on_attach = function(client, bufnr)
 end
 
 -- nvim-cmp supports additional completion capabilities
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- enable the following language servers
 local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'sumneko_lua' }
@@ -502,9 +545,15 @@ require('lspconfig').clangd.setup {
     capabilities = capabilities,
 }
 
+require('lspconfig').rust_analyzer.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+}
+
 -- nvim-cmp setup
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
+local lspkind = require 'lspkind'
 
 cmp.setup {
     -- must specify a snippet engine
@@ -553,7 +602,22 @@ cmp.setup {
     sources = {
         { name = 'nvim_lsp' },
         { name = 'luasnip' },
-        { name = 'buffer' },
+        --{ name = 'buffer' }, -- ANNOYING!
+    },
+
+    formatting = {
+        format = lspkind.cmp_format({
+            mode = 'symbol_text', -- show symbol+text annotations
+            maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+
+            -- The function below will be called before any actual modifications from lspkind
+            -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
+            before = function (entry, vim_item)
+                -- ...
+                return vim_item
+            end
+        })
     },
 }
 
@@ -604,5 +668,67 @@ vim.keymap.set("i", "<leader>xl", function()
     end
 end)
 
--- the line beneath this is called `modeline`. see `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+-- [[ Marks setup ]]
+require('marks').setup {
+    default_mappings = false, -- turn off key mappings
+    builtin_marks = { ".", "<", ">", "^" },
+    cyclic = true,
+    force_write_shada = false,
+    refresh_interval = 250,
+    sign_priority = { lower=10, upper=15, builtin=8, bookmark=20},
+    excluded_filetypes = {},
+    mappings = {},
+}
+
+
+-- [[ Surround setup ]]
+-- require('nvim-surround').setup {
+--     keymaps = {
+--         insert = "<C-g>s",
+--         insert_line = "<C-g>S",
+--         normal = "<leader>s", -- [S]urround [W]ord
+--         normal_cur = "<leader>ss", -- current line
+--         normal_line = "<leader>S", -- new line
+--         visual = "S",
+--         visual_line = "gS",
+--         delete = "<leader>sd",
+--         change = "<leader>sc",
+--     },
+--     surrounds = {
+--         invalid_key_behavior = function()
+--             vim.api.nvim_err_writeln("Error: Invalid character!")
+--         end,
+--         pairs = {
+--             ["("] = { "( ", " )" }, -- extra space!
+--             [")"] = { "(", ")" },   -- no space
+--             ["{"] = { "{ ", " }" }, -- etc
+--             ["}"] = { "{", "}" },   -- etc
+--             ["<"] = { "< ", " >" },
+--             [">"] = { "<", ">" },
+--             ["["] = { "[ ", " ]" },
+--             ["]"] = { "[", "]" },
+--         },
+--         separators = {
+--             ["'"] = { "'", "'" },
+--             ['"'] = { '"', '"' },
+--             ["`"] = { "`", "`" },
+--         },
+--         HTML = {
+--             ["t"] = "type",
+--             ["T"] = "whole",
+--         },
+--         aliases = {
+--             ["a"] = ">",
+--             ["b"] = ")",
+--             ["B"] = "}",
+--             ["r"] = "]",
+--             ["q"] = { '"', "'", "`" },
+--             ["s"] = { "}", "]", ")", ">", '"', "'", "`" },
+--         },
+--     },
+--     highlight = {
+--         duration = 0,
+--     },
+--     move_cursor = "begin"
+-- }
+
