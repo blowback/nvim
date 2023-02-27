@@ -1,4 +1,5 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
     "git",
@@ -17,6 +18,7 @@ vim.opt.runtimepath:prepend(lazypath)
 --vim.g.mapleader = " "
 vim.g.mapleader = ","
 
+-- merge all the files in lua/core/plugins into a single spec
 require("lazy").setup("core.plugins", {
   -- defaults = { lazy = true },
   install = {
