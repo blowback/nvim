@@ -1,6 +1,5 @@
 local map = vim.keymap.set
 
-
 -- <m-up> etc don't work in terminal, but <s-up> and <c-up> do
 -- c-\ c-n temp switch to normal mode
 map("", "<c-up>", "<c-\\><c-n>:bp<cr>")
@@ -13,12 +12,14 @@ vim.o.pastetoggle = "<F10>"
 
 -- select last pasted region
 map("", "gp", function()
-    local visual = vim.fn.getregtype()
-    local cmd = ":normal `[" .. visual .. "`]"
-    vim.api.nvim_exec(cmd, false)
+  local visual = vim.fn.getregtype()
+  local cmd = ":normal `[" .. visual .. "`]"
+  vim.api.nvim_exec(cmd, false)
 end)
 
 -- navigate prev/next errors
 map("", "<c-N>", "<c-\\><c-n>:cn<cr>")
 map("", "<c-P>", "<c-\\><c-n>:cp<cr>")
 
+-- toggle comment in insert mode
+map("i", "<c-/>", require("Comment.api").toggle.linewise.current)
