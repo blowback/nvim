@@ -1,4 +1,3 @@
-
 local settings = require("core.settings")
 
 if settings.theme == "nightfox" then
@@ -28,6 +27,14 @@ elseif settings.theme == "kanagawa" then
     "rebelot/kanagawa.nvim",
     config = function()
       require("lua.core.plugins.themes.kanagawa")
+    end,
+  }
+elseif settings.theme == "oxocarbon" then
+  return {
+    "nyoom-engineering/oxocarbon.nvim",
+    config = function()
+      vim.opt.background = "dark" -- set this to dark or light
+      vim.cmd("colorscheme oxocarbon")
     end,
   }
 else

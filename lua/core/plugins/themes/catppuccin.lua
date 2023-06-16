@@ -1,4 +1,3 @@
-
 local catppuccin = require("catppuccin")
 
 catppuccin.setup({
@@ -66,11 +65,12 @@ catppuccin.setup({
       show_root = true,
       transparent_panel = false,
     },
-    which_key = true,
+    which_key = false,
     indent_blankline = {
       enabled = true,
       colored_indent_levels = false,
     },
+    alpha = true,
     dashboard = false,
     neogit = true,
     vim_sneak = false,

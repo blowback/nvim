@@ -4,10 +4,9 @@ local o = vim.opt
 local wo = vim.wo
 local fn = vim.fn
 
-
 -- [[ tab settings ]]
-o.tabstop = 4 -- num. spaces used to represent tab in the file
-o.shiftwidth = 4 -- num. spaces for horizontal shift, 0 => same as tabstop (deprecated)
+o.tabstop = 2 -- num. spaces used to represent tab in the file
+o.shiftwidth = 2 -- num. spaces for horizontal shift, 0 => same as tabstop (deprecated)
 o.expandtab = true -- insert mode tab -> spaces
 
 -- [[ indentation setup ]]
@@ -26,10 +25,10 @@ o.whichwrap = "b,s,<,>,[,]" -- allow left/right/bs/spc to move across line bound
 --o.wildmode="longest,list" -- bash-like filename completion
 o.wildmode = "full" -- enable 'wildmenu'
 o.updatetime = 250 -- make cursorhold plugins a bit more responsive
-o.mouse = 'a' -- enable mouse in all modes
+o.mouse = "a" -- enable mouse in all modes
 o.breakindent = true -- indent wrapped lines
 o.undofile = true -- save undo history
-wo.signcolumn = 'yes'
+wo.signcolumn = "yes"
 
 -- [[ search settings ]]
 o.hlsearch = true -- highlight current search pattern
@@ -89,15 +88,15 @@ o.listchars = "tab:┊┈,trail:…,extends:►,precedes:◄,nbsp:˽"
 
 -- [[ error/make/quickfix settings ]]
 o.errorformat = "%-Dmake: Entering directory `%f'"
-vim.opt.errorformat:append {
-    "%-Xmake: Leaving directory `%f'",
-    "%-G%f: In function %m",
-    "%-GCompiling %f%m",
-    "%-G(Dependencies %f)",
-    "%-G%f:%l: error: (Each undeclared identifier is reported only once",
-    "%-G%f:%l: error: for each function it appears in.)",
-    "%f:%l:%m",
-}
+vim.opt.errorformat:append({
+  "%-Xmake: Leaving directory `%f'",
+  "%-G%f: In function %m",
+  "%-GCompiling %f%m",
+  "%-G(Dependencies %f)",
+  "%-G%f:%l: error: (Each undeclared identifier is reported only once",
+  "%-G%f:%l: error: for each function it appears in.)",
+  "%f:%l:%m",
+})
 
 o.makeprg = "./make.sh"
 o.shellpipe = "2>&1 >"
@@ -111,25 +110,4 @@ o.termguicolors = true -- 24bit color in tui. uses "gui" highlights over "cterm"
 -- vim.o.printoptions = "paper:A4,syntax:y,wrap:y,duplex:long,portrait:n"
 
 -- set completeopt to have a better completion experience
-o.completeopt = 'menuone,noselect'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+o.completeopt = "menuone,noselect"

@@ -18,6 +18,8 @@ nls.setup({
     nls.builtins.code_actions.shellcheck,
     nls.builtins.code_actions.gitsigns,
     nls.builtins.formatting.shfmt,
+    nls.builtins.diagnostics.ruff,
+    nls.builtins.formatting.rustfmt,
   },
   on_attach = function(client, bufnr)
     local default_options = { silent = true }

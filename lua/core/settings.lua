@@ -1,6 +1,6 @@
 local M = {}
 
--- theme: nightfox, tokyonight, tundra, kanagawa; default is catppuccin
+-- theme: nightfox, tokyonight, tundra, kanagawa; oxocarbon default is catppuccin
 -- refer to the themes settings file for different styles
 M.theme = "catppuccin"
 
@@ -42,10 +42,6 @@ M.dashboard_recent_files = 5
 M.disable_dashboard_header = false
 
 -- disable quick links of the dashboard
-M.disable_dashboard_quick_links = false
-
--- treesitter parsers to be installed
--- one of "all", "maintained" (parsers with maintainers), or a list of languages
 M.treesitter_ensure_installed = {
   "bash",
   "c",
@@ -85,20 +81,25 @@ M.treesitter_ensure_installed = {
   "yaml",
 }
 
--- Tools that should be installed by Mason(-tool-install)
-M.mason_tool_installer_ensure_installed = {
-  -- LSP
-  "bash-language-server",
-  "dockerfile-language-server",
-  "json-lsp",
+-- Tools that should be installed by Mason-lspconfig
+M.lsp_servers = {
+  "bashls",
+  "dockerls",
+  "jsonls",
+  "ltex",
   "marksman",
-  "typescript-language-server",
-  "texlab",
-  "ltex-ls",
-  "lua-language-server",
   "pyright",
-  "terraform-ls",
-  "yaml-language-server",
+  "lua_ls",
+  "rust_analyzer",
+  "tailwindcss",
+  "terraformls",
+  "texlab",
+  "tsserver",
+  "yamlls",
+}
+
+-- Tools that should be installed by Mason
+M.tools = {
   -- Formatter
   "black",
   "prettier",
@@ -109,8 +110,10 @@ M.mason_tool_installer_ensure_installed = {
   "shellcheck",
   "tflint",
   "yamllint",
+  "ruff",
   -- DAP
   "debugpy",
+  "codelldb",
 }
 
 -- enable greping in hidden files

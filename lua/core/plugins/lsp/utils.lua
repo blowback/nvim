@@ -3,23 +3,25 @@ M = {}
 
 -- must be global or the initial state is not working
 VIRTUAL_TEXT_ACTIVE = true
-
 -- toggle displaying virtual text
 M.toggle_virtual_text = function()
   VIRTUAL_TEXT_ACTIVE = not VIRTUAL_TEXT_ACTIVE
-  utils.notify(string.format("Virtualtext %s", VIRTUAL_TEXT_ACTIVE and "on" or "off"), 1, "lsp/utils.lua")
+  utils.notify(
+    string.format("Virtualtext %s", VIRTUAL_TEXT_ACTIVE and "on" or "off"),
+    vim.log.levels.INFO,
+    "lsp/utils.lua"
+  )
   vim.diagnostic.show(nil, 0, nil, { virtual_text = VIRTUAL_TEXT_ACTIVE })
 end
 
 -- must be global or the initial state is not working
 AUTOFORMAT_ACTIVE = true
-
 -- toggle null-ls's autoformatting
 M.toggle_autoformat = function()
   AUTOFORMAT_ACTIVE = not AUTOFORMAT_ACTIVE
-  require("core.utils.functions").notify(
+  utils.notify(
     string.format("Autoformatting %s", AUTOFORMAT_ACTIVE and "on" or "off"),
-    1,
+    vim.log.levels.INFO,
     "lsp.utils"
   )
 end
@@ -42,63 +44,6 @@ function M.get_python_path(workspace)
   end
   -- Fallback to system Python.
   return vim.fn.exepath("python3") or vim.fn.exepath("python") or "python"
-end
-
-local function disable_diagnostics(bufnr, message)
-  utils.notify("Disabling diagnostics for HelmRelease files", 1, "lsp/utils")
-  vim.diagnostic.reset(bufnr)
-  vim.diagnostic.disable(bufnr)
-end
-
-local function handle_helm_templates(bufnr)
-  local bufferData = vim.api.nvim_buf_get_text(bufnr, 0, 0, -1, -1, {})
-  local bufferString = table.concat(bufferData, "\n")
-  -- usually Helm files are in a template folder
-  -- TODO: more robust and elegant check
-  if string.find(bufferString, "kind: HelmRelease") then
-    disable_diagnostics(bufnr, "Disabling diagnostics for HelmRelease files")
-  end
-end
-
-local function handle_docker_compose(bufnr)
-  local bufName = vim.api.nvim_buf_get_name(bufnr)
-  -- TODO: more robust and elegant check
-  -- search dor docker-compose.yaml does not work!
-  if string.find(bufName, "compose.yaml") then
-    disable_diagnostics(bufnr, "Disabling diagnostics for docker-compose files")
-  end
-end
-
-local function handle_helm_releases(bufnr)
-  local bufName = vim.api.nvim_buf_get_name(bufnr)
-  -- TODO: more robust and elegant check
-  if string.find(bufName, "templates") then
-    disable_diagnostics(bufnr, "Disabling diagnostics for Helm template files")
-  end
-end
-
-local function handle_kustomization(bufnr)
-  local bufName = vim.api.nvim_buf_get_name(bufnr)
-  -- TODO: more robust and elegant check
-  if string.find(bufName, "kustomization.yaml") then
-    disable_diagnostics(bufnr, "Disabling diagnostics for kustomization.yaml")
-  end
-end
-
-function M.custom_lsp_attach(client, bufnr)
-  -- disable formatting for LSP clients as this is handled by null-ls
-  client.server_capabilities.documentFormattingProvider = false
-  client.server_capabilities.documentRangeFormattingProvider = false
-  -- enable navic for displaying current code context
-  if client.server_capabilities.documentSymbolProvider then
-    --require("nvim-navic").attach(client, bufnr)
-  end
-  -- TODO: this workaround is not sufficient and bugyy
-  -- handle_helm_templates(bufnr)
-  -- handle_kustomization(bufnr)
-  -- handle_docker_compose(bufnr)
-  -- handle_helm_releases(bufnr)
-  local default_options = { silent = true }
 end
 
 return M

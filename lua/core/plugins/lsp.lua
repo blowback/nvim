@@ -1,8 +1,9 @@
 -- collection of configurations for built-in lsp client
 local M = {
   "neovim/nvim-lspconfig",
+  event = { "BufReadPre", "BufNewFile" },
   dependencies = {
-    "onsails/lspkind-nvim",
+    { "onsails/lspkind-nvim" },
   },
   config = function()
     require("core.plugins.lsp.lsp")
