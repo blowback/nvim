@@ -84,6 +84,7 @@ M.treesitter_ensure_installed = {
 -- Tools that should be installed by Mason-lspconfig
 M.lsp_servers = {
   "bashls",
+  "clangd",
   "dockerls",
   "jsonls",
   "ltex",
