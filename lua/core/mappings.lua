@@ -9,13 +9,13 @@ map("", "<c-left>", "<c-\\><c-n>:tabp<cr>")
 map("", "<c-right>", "<c-\\><c-n>:tabn<cr>")
 
 -- wny isn't this a mapping? because it works in INSERT even when 'paste' is on
-vim.o.pastetoggle = "<F10>"
+-- vim.o.pastetoggle = "<F10>" -- OBSOLETE, nvim automatically handles paste
 
 -- select last pasted region
 map("", "gp", function()
   local visual = vim.fn.getregtype()
   local cmd = ":normal `[" .. visual .. "`]"
-  vim.api.nvim_exec(cmd, false)
+  vim.api.nvim_exec2(cmd, { output = false })
 end)
 
 -- navigate prev/next errors

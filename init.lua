@@ -10,6 +10,7 @@
 --                              3.9   23/02/2023 unicode signs, cmp icons
 --                              3.10  24/02/2023 modularize: based on https://github.com/Allaman/nvim
 --                                                                and https://gist.github.com/benfrain/97f2b91087121b2d4ba0dcc4202d252f
+--                              3.11  16/06/2023 up to date wrt Allaman 7a9b7213b0bafeff942eeecdb18c6549df3f40ea
 require("core.globals")
 require("core.lazy")
 require("core.mappings")
