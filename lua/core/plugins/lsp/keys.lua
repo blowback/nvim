@@ -19,7 +19,7 @@ M._keys = {
   { "<leader>le", "<cmd>Telescope diagnostics bufnr=0<cr>", desc = "Document Diagnostics" },
   { "<leader>lq", vim.diagnostic.setloclist, desc = "Diagnostics in qflist" },
   { "<leader>lws", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Workspace Symbols" },
-  { "<leader>lwd", "<cmd>Telescope diagnostics<cr>", desc = "Workspace Symbols" },
+  { "<leader>lwd", "<cmd>Telescope diagnostics<cr>", desc = "Workspace Diagnostics" },
   { "<leader>lwa", vim.lsp.buf.add_workspace_folder, desc = "Add Folder" },
   { "<leader>lwl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>", desc = "List Folders" },
   { "<leader>lwr", vim.lsp.buf.remove_workspace_folder, desc = "Remove Folder" },
@@ -42,9 +42,9 @@ function M.on_attach(client, buffer)
     if not keys.has or client.server_capabilities[keys.has .. "Provider"] then
       local opts = Keys.opts(keys)
       opts.has = nil
-      opts.silent = true
+      opts.silent = opts.silent ~= false
       opts.buffer = buffer
-      vim.keymap.set(keys.mode or "n", keys[1], keys[2], opts)
+      vim.keymap.set(keys.mode or "n", keys.lhs, keys.rhs, opts)
     end
   end
 end

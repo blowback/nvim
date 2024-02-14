@@ -5,8 +5,8 @@ local wo = vim.wo
 local fn = vim.fn
 
 -- [[ tab settings ]]
-o.tabstop = 2 -- num. spaces used to represent tab in the file
-o.shiftwidth = 2 -- num. spaces for horizontal shift, 0 => same as tabstop (deprecated)
+o.tabstop = 4 -- num. spaces used to represent tab in the file
+o.shiftwidth = 0 -- num. spaces for horizontal shift, 0 => same as tabstop (deprecated)
 o.expandtab = true -- insert mode tab -> spaces
 
 -- [[ indentation setup ]]
