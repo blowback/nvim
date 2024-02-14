@@ -73,3 +73,6 @@ map(
   { desc = "Toggle Virtualtext" }
 )
 map("n", "<leader>ts", "<cmd>SymbolsOutline<cr>", { desc = "Toggle SymbolsOutline" })
+
+-- save the current (lua) buffer and source it
+map("n", "<leader><leader>x", ":w<CR>:so %<CR>", { desc = "Save and source buffer" })
