@@ -31,7 +31,9 @@ local M = {
     end
 
     -- install LSPs
-    require("mason-lspconfig").setup({ ensure_installed = settings.lsp_servers })
+    require("mason-lspconfig").setup({
+      ensure_installed = settings.lsp_servers,
+    })
   end,
 }
 

@@ -48,6 +48,7 @@ M.treesitter_ensure_installed = {
   "cmake",
   "cpp",
   "css",
+  "dart",
   "dockerfile",
   "dot",
   "elixir",
@@ -81,7 +82,7 @@ M.treesitter_ensure_installed = {
   "yaml",
 }
 
--- Tools that should be installed by Mason-lspconfig
+-- LSP tools that should be installed by Mason-lspconfig
 M.lsp_servers = {
   "bashls",
   "clangd",
@@ -99,7 +100,7 @@ M.lsp_servers = {
   "yamlls",
 }
 
--- Tools that should be installed by Mason
+-- Non-LSP tools that should be installed by Mason
 M.tools = {
   -- Formatter
   "black",

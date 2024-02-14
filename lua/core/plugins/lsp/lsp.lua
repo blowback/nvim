@@ -20,6 +20,7 @@ for _, lsp in ipairs(settings.lsp_servers) do
     vim.notify("rust_analyzer is managed by rust-tools", vim.log.levels.INFO, { title = "LSP config" })
     break
   end
+
   nvim_lsp[lsp].setup({
     before_init = function(_, config)
       if lsp == "pyright" then
@@ -36,5 +37,8 @@ for _, lsp in ipairs(settings.lsp_servers) do
       texlab = lsp_settings.tex,
       yaml = lsp_settings.yaml,
     },
+  })
+  nvim_lsp.dartls.setup({
+    cmd = { "dart", "language-server", "--protocol=lsp" },
   })
 end
