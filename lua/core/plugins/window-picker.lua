@@ -1,5 +1,8 @@
 local M = {
   "s1n7ax/nvim-window-picker",
+  version = "2.*",
+  event = "VeryLazy",
+
   opts = {
     -- hint = "statusline-winbar",
     hint = "floating-big-letter",
