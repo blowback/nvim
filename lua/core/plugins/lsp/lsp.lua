@@ -8,33 +8,33 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
 require("core.utils.functions").on_attach(function(client, buffer)
-  require("core.plugins.lsp.keys").on_attach(client, buffer)
+	require("core.plugins.lsp.keys").on_attach(client, buffer)
 end)
 
 for _, lsp in ipairs(settings.lsp_servers) do
-  if lsp == "rust_analyzer" then
-    vim.notify("rust_analyzer is managed by rust-tools", vim.log.levels.INFO, { title = "LSP config" })
-    break
-  end
+	if lsp == "rust_analyzer" then
+		-- vim.notify("rust_analyzer is managed by rust-tools", vim.log.levels.INFO, { title = "LSP config" })
+		break
+	end
 
-  nvim_lsp[lsp].setup({
-    before_init = function(_, config)
-      if lsp == "pyright" then
-        config.settings.python.pythonPath = utils.get_python_path(config.root_dir)
-      end
-    end,
-    capabilities = capabilities,
-    flags = { debounce_text_changes = 150 },
-    settings = {
-      json = lsp_settings.json,
-      Lua = lsp_settings.lua,
-      ltex = lsp_settings.ltex,
-      redhat = { telemetry = { enabled = false } },
-      texlab = lsp_settings.tex,
-      yaml = lsp_settings.yaml,
-    },
-  })
-  nvim_lsp.dartls.setup({
-    cmd = { "dart", "language-server", "--protocol=lsp" },
-  })
+	nvim_lsp[lsp].setup({
+		before_init = function(_, config)
+			if lsp == "pyright" then
+				config.settings.python.pythonPath = utils.get_python_path(config.root_dir)
+			end
+		end,
+		capabilities = capabilities,
+		flags = { debounce_text_changes = 150 },
+		settings = {
+			json = lsp_settings.json,
+			Lua = lsp_settings.lua,
+			ltex = lsp_settings.ltex,
+			redhat = { telemetry = { enabled = false } },
+			texlab = lsp_settings.tex,
+			yaml = lsp_settings.yaml,
+		},
+	})
+	nvim_lsp.dartls.setup({
+		cmd = { "dart", "language-server", "--protocol=lsp" },
+	})
 end
