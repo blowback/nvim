@@ -19,15 +19,15 @@ local M = {
 	opts = {
 		-- Define your formatters
 		formatters_by_ft = {
-			lua = { "stylua" },
+			lua = { "styluaX" },
 			-- run isort and black sequentially
 			python = { "isort", "black" },
 			-- run only the first available of prettierd, prettier
-			javascript = { { "prettierd", "prettier" } },
+			javascript = { "prettierd", "prettier" },
 		},
 
 		-- Set up format-on-save
-		format_on_save = { timeout_ms = 500, lsp_fallback = true },
+		-- format_on_save = { timeout_ms = 500, lsp_fallback = true },
 
 		-- Customize formatters
 		formatters = {

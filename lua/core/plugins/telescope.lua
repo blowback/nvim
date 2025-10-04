@@ -174,11 +174,11 @@ local M = {
       },
     })
 
-    telescope.load_extension("projects")
-    telescope.load_extension("zoxide")
-    telescope.load_extension("heading")
-    telescope.load_extension("ui-select")
-    telescope.load_extension("make")
+    -- telescope.load_extension("projects")
+    -- telescope.load_extension("zoxide")
+    -- telescope.load_extension("heading")
+    -- telescope.load_extension("ui-select")
+    -- telescope.load_extension("make")
     if settings.enable_noice then
       telescope.load_extension("noice")
     end

@@ -23,20 +23,43 @@ P = function(v)
 end
 
 -- customise the signs used for marks
-local utf8 = require("core.utils.utf8")
-local lmarks = "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ"
-local umarks = "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ"
-local nmarks = "⓪①②③④⑤⑥⑦⑧⑨"
-local testmarks = "ⓐbcdefghijklmnopqrstuvwxyz"
+-- local utf8 = require("core.utils.utf8")
+-- local lmarks = "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ"
+-- local umarks = "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ"
+-- local nmarks = "⓪①②③④⑤⑥⑦⑧⑨"
+-- local testmarks = "ⓐbcdefghijklmnopqrstuvwxyz"
+--
+-- local function add_marks(marks, initial)
+--   local b = string.byte(initial)
+--   local i = 1
+--   for p, c in utf8.codes(marks) do
+--     --local c = utf8.char(c)
+--     local n = string.char(b + i - 1)
+--     i = i + 1
+--     vim.fn.sign_define("Marks_" .. n, { text = c, texthl = "MarkSignHL", numhl = "MarkSignNumHL" })
+--   end
+-- end
+-- add_marks(lmarks, "a")
+diagnostics = {
+    [vim.diagnostic.severity.ERROR]= { name = "ERROR", text = "󰅙", hl = "DiagnosticSignError" },
+    [vim.diagnostic.severity.WARN] = { name = "WARN", text = "", hl = "DiagnosticSignWarn" },
+    [vim.diagnostic.severity.HINT] = { name = "HINT", text = "", hl = "DiagnosticSignHint" },
+    [vim.diagnostic.severity.INFO] = { name = "INFO", text = "󰋼", hl = "DiagnosticSignInfo" },
+}
 
-local function add_marks(marks, initial)
-  local b = string.byte(initial)
-  local i = 1
-  for p, c in utf8.codes(marks) do
-    --local c = utf8.char(c)
-    local n = string.char(b + i - 1)
-    i = i + 1
-    vim.fn.sign_define("Marks_" .. n, { text = c, texthl = "MarkSignHL", numhl = "MarkSignNumHL" })
-  end
+local severity = vim.diagnostic.severity
+
+local signs = {
+    text = {},
+    linehl = {},
+    numhl = {},
+}
+
+for _, level in pairs(diagnostics) do
+    signs.text[severity[level.name]] = level.text
+    signs.linehl[severity[level.name]] = "" -- level.hl
+    signs.numhl[severity[level.name]] = level.hl
 end
-add_marks(lmarks, "a")
+
+vim.diagnostic.config({ signs = signs })
+

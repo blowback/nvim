@@ -96,7 +96,7 @@ M.lsp_servers = {
 	"tailwindcss",
 	"terraformls",
 	"texlab",
-	"tsserver",
+	"ts_ls",
 	"yamlls",
 }
 

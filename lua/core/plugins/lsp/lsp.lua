@@ -1,5 +1,4 @@
 local settings = require("core.settings")
-local nvim_lsp = require("lspconfig")
 local utils = require("core.plugins.lsp.utils")
 local lsp_settings = require("core.plugins.lsp.settings")
 
@@ -17,11 +16,14 @@ for _, lsp in ipairs(settings.lsp_servers) do
 		break
 	end
 
-	nvim_lsp[lsp].setup({
+    vim.lsp.config(lsp, {
 		before_init = function(_, config)
 			if lsp == "pyright" then
 				config.settings.python.pythonPath = utils.get_python_path(config.root_dir)
 			end
+            if lsp == 'dart' then
+                cmd = { "dart", "language-server", "--protocol=lsp" }
+            end
 		end,
 		capabilities = capabilities,
 		flags = { debounce_text_changes = 150 },
@@ -33,8 +35,5 @@ for _, lsp in ipairs(settings.lsp_servers) do
 			texlab = lsp_settings.tex,
 			yaml = lsp_settings.yaml,
 		},
-	})
-	nvim_lsp.dartls.setup({
-		cmd = { "dart", "language-server", "--protocol=lsp" },
 	})
 end
